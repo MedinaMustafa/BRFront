@@ -12,3 +12,49 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
     monospace;
 }
+
+/* Fix dropdown menu overflow and alignment */
+.dropdown-menu {
+  right: 0 !important;
+  left: auto !important;
+  transform: none !important;
+  position: absolute !important;
+  min-width: 200px;
+  max-width: 250px;
+  white-space: nowrap;
+}
+
+/* Ensure dropdown doesn't overflow on small screens */
+@media (max-width: 768px) {
+  .dropdown-menu {
+    right: 0 !important;
+    left: auto !important;
+    max-width: calc(100vw - 20px);
+  }
+}
+
+/* Profile dropdown specific styling */
+#profileDropDown + .dropdown-menu {
+  right: 0 !important;
+  left: auto !important;
+}
+
+/* Position dropdown caret to the right of profile circle */
+.dropdown-toggle::after {
+  margin-left: 8px !important;
+  vertical-align: middle !important;
+}
+
+/* Style the profile dropdown toggle to display profile and caret horizontally */
+#profileDropDown {
+  display: flex !important;
+  align-items: center !important;
+  flex-direction: row !important;
+}
+
+/* Ensure dropdown items don't wrap */
+.dropdown-item {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}

@@ -2,9 +2,11 @@ import React from "react";
 
 const Footer = () => (
   <footer className="bg-light p-3 text-center">
-    <div className="logo" />
     <p>
-      Sample project provided by <a href="https://auth0.com">Auth0</a>
+      Book ratings and reviews curated with ❤️ by <strong>Medina Mustafa</strong> and <strong>Rron Haxhiu</strong>.
+    </p>
+    <p>
+      Explore, rate, and discover your next favorite book!
     </p>
   </footer>
 );
