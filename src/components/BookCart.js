@@ -1,27 +1,9 @@
 import { NavLink } from "react-router-dom";
 // import Stars from "../general/Stars";
-
-import {
-  Button,
-} from "reactstrap";
-import { toast } from "react-toastify";
-import api from "../config/config";
+import WishlistDropdown from "./WishlistDropdown";
+import BookWishlistIndicator from "./BookWishlistIndicator";
 
 function BookCart({ book }) {
-
-  function addBookshelf() {
-    api
-    .post("/UserBooks/Add", book.id)
-    .then((response) => {
-      toast.success(response.data);
-    })
-    .catch((error) => {
-      toast.error("Book is already in your collection!");
-    })
-    .finally(() => {
-    });
-
-  }
 
   return (
     <div
@@ -43,7 +25,10 @@ function BookCart({ book }) {
         </div>
         {/* {<Stars no={3} />} */}
       </NavLink>
-      <Button onClick={() => addBookshelf()}>Add to bookshelf</Button>
+      <div className="d-flex gap-2 mt-2">
+        <WishlistDropdown book={book} />
+      </div>
+      <BookWishlistIndicator book={book} />
     </div>
   );
 }
