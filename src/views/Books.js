@@ -1,46 +1,33 @@
-import React, {useState, useEffect} from "react";
-import { Container } from "reactstrap";
-import api from "../config/config";
+import React from "react";
+import { Container, Row, Col } from "reactstrap";
 import { useAuth0, withAuthenticationRequired } from "@auth0/auth0-react";
 import BookCart from "../components/BookCart";
+import { useBooks } from "../hooks";
 
 export const BooksComponent = () => {
   const { user } = useAuth0();
-
-  const [books, setBooks] = useState([]);
-  const [loading, setLoading] = useState(false);
-  console.log("WHAT???")
-
-  useEffect(() => {
-    getRecommandetProducts();
-  }, []);
-
-  function getRecommandetProducts() {
-    api
-      .get("/Book")
-      .then((response) => {
-        setBooks(response.data);
-      })
-      .catch((error) => {
-        setLoading(false);
-      })
-      .finally(() => {
-        setLoading(false);
-      });
-  }
+  const { books, loading, error } = useBooks();
 
   if (loading) return <>Loading</>;
-  if (books.length == 0) return  <p>Nothing found!</p>
-
+  if (error) return <p>Error: {error}</p>;
 
   return (
-    <Container className="mb-5 flex flex-col gap-10">
-      <h2 className="text-3xl">Discover our Books</h2>
-      <div class="grid grid-cols-1 sm:grid-cols-5 gap-6">
-        {books.map((data, j) => {
-          return <BookCart book={data} key={j} />;
-        })}
+    <Container className="mb-5">
+      <div className="d-flex justify-content-between align-items-center mb-4">
+        <h2 className="text-3xl">Discover our Books</h2>
       </div>
+      
+      {books.length === 0 ? (
+        <p>Nothing found!</p>
+      ) : (
+        <Row>
+          {books.map((data, j) => (
+            <Col key={j} md="6" lg="4" xl="3" className="mb-4">
+              <BookCart book={data} />
+            </Col>
+          ))}
+        </Row>
+      )}
     </Container>
   );
 };

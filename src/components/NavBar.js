@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { NavLink as RouterNavLink } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import CategoryDropdown from "./CategoryDropdown";
 
 import {
   Collapse,
@@ -28,6 +29,9 @@ const NavBar = () => {
     loginWithRedirect,
     logout,
   } = useAuth0();
+
+  // Check if user has admin role
+  const isAdmin = user && user["https://lab1.com/roles"]?.includes("Admin");
   const toggle = () => setIsOpen(!isOpen);
 
   const logoutWithRedirect = () =>
@@ -66,6 +70,9 @@ const NavBar = () => {
                   Books
                 </NavLink>
               </NavItem>
+              <NavItem>
+                <CategoryDropdown />
+              </NavItem>
               {isAuthenticated && (
                 <NavItem>
                   <NavLink
@@ -75,6 +82,33 @@ const NavBar = () => {
                     activeClassName="router-link-exact-active"
                   >
                     External API
+                  </NavLink>
+                </NavItem>
+              )}
+              {isAuthenticated && (
+                <NavItem>
+                  <NavLink
+                    tag={RouterNavLink}
+                    to="/wishlists"
+                    exact
+                    activeClassName="router-link-exact-active"
+                  >
+                    <FontAwesomeIcon icon="heart" className="mr-2" />
+                    My Wishlists
+                  </NavLink>
+                </NavItem>
+              )}
+              {isAuthenticated && isAdmin && (
+                <NavItem>
+                  <NavLink
+                    tag={RouterNavLink}
+                    to="/admin"
+                    exact
+                    activeClassName="router-link-exact-active"
+                    className="text-danger font-weight-bold"
+                  >
+                    <FontAwesomeIcon icon="cog" className="mr-2" />
+                    Admin
                   </NavLink>
                 </NavItem>
               )}
@@ -101,7 +135,7 @@ const NavBar = () => {
                       width="50"
                     />
                   </DropdownToggle>
-                  <DropdownMenu>
+                  <DropdownMenu style={{ zIndex: 9999 }}>
                     <DropdownItem header>{user.name}</DropdownItem>
                     <DropdownItem
                       tag={RouterNavLink}
@@ -177,6 +211,21 @@ const NavBar = () => {
           </Collapse>
         </Container>
       </Navbar>
+      
+      <style jsx>{`
+        .nav-container {
+          position: relative;
+          z-index: 1000;
+        }
+        
+        .dropdown-menu {
+          z-index: 9999 !important;
+        }
+        
+        .nav-container .dropdown-menu {
+          z-index: 9999 !important;
+        }
+      `}</style>
     </div>
   );
 };
