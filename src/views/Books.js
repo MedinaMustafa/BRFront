@@ -1,5 +1,5 @@
 import React from "react";
-import { Container, Row, Col } from "reactstrap";
+import { Container, Row, Col, Spinner } from "reactstrap";
 import { useAuth0, withAuthenticationRequired } from "@auth0/auth0-react";
 import BookCart from "../components/BookCart";
 import { useBooks } from "../hooks";
@@ -8,7 +8,17 @@ export const BooksComponent = () => {
   const { user } = useAuth0();
   const { books, loading, error } = useBooks();
 
-  if (loading) return <>Loading</>;
+  if (loading) {
+    return (
+      <Container className="mb-5">
+        <div className="text-center py-5">
+          <Spinner size="lg" color="primary" className="mb-3" />
+          <p className="text-muted">Loading books...</p>
+        </div>
+      </Container>
+    );
+  }
+  
   if (error) return <p>Error: {error}</p>;
 
   return (
@@ -33,5 +43,12 @@ export const BooksComponent = () => {
 };
 
 export default withAuthenticationRequired(BooksComponent, {
-  onRedirecting: () => <p>Loading</p>,
+  onRedirecting: () => (
+    <Container className="mb-5">
+      <div className="text-center py-5">
+        <Spinner size="lg" color="primary" className="mb-3" />
+        <p className="text-muted">Authenticating...</p>
+      </div>
+    </Container>
+  ),
 });

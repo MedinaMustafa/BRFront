@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Badge } from "reactstrap";
+import { Badge, Spinner } from "reactstrap";
 import { useWishlists } from "../hooks";
 
 const BookWishlistIndicator = ({ book }) => {
@@ -23,8 +23,8 @@ const BookWishlistIndicator = ({ book }) => {
   if (loading) {
     return (
       <div className="mt-2">
-        <small className="text-muted">
-          <i className="fas fa-spinner fa-spin mr-1"></i>
+        <small className="text-muted d-flex align-items-center">
+          <Spinner size="sm" className="mr-2" />
           Loading wishlist status...
         </small>
       </div>

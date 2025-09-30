@@ -1,73 +1,179 @@
 import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
-import api from "../config/config";
+import { Row, Col, Card, CardBody, Button, Spinner, Alert } from "reactstrap";
 import { useAuth0, withAuthenticationRequired } from "@auth0/auth0-react";
+import api from "../config/config";
+import { useRatings } from "../hooks";
+import StarRating from "../components/StarRating";
+import ReviewForm from "../components/ReviewForm";
+import ReviewsList from "../components/ReviewsList";
+import WishlistDropdown from "../components/WishlistDropdown";
+import BookWishlistIndicator from "../components/BookWishlistIndicator";
 
 const BookDetails = () => {
-  const { user } = useAuth0();
+  const { user, isAuthenticated } = useAuth0();
   const { id } = useParams();
   const [book, setBook] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [addReview, setAddReview] = useState(false);
+  const [showReviewForm, setShowReviewForm] = useState(false);
+  const [error, setError] = useState(null);
 
-  console.log("id",id);
+  const { 
+    reviews, 
+    averageRating, 
+    loading: ratingsLoading, 
+    error: ratingsError, 
+    addReview 
+  } = useRatings(id);
+
   useEffect(() => {
-    getRecommandetProducts();
+    fetchBookDetails();
   }, [id]);
 
-  function getRecommandetProducts() {
-    api
-      .get(`/Book/${id}`)
-      .then((response) => {
-        console.log(
-          "resource", response
-        )
-        setBook(response.data);
-      })
-      .catch((error) => {
-        setLoading(false);
-      })
-      .finally(() => {
-        setLoading(false);
-      });
+  const fetchBookDetails = async () => {
+    try {
+      setLoading(true);
+      setError(null);
+      const response = await api.get(`/Book/${id}`);
+      setBook(response.data);
+    } catch (err) {
+      console.error("Error fetching book details:", err);
+      setError("Failed to load book details");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleReviewSubmitted = async (reviewData) => {
+    await addReview(reviewData);
+    setShowReviewForm(false);
+  };
+
+  if (loading) {
+    return (
+      <div className="text-center py-5">
+        <Spinner size="lg" color="primary" />
+        <p className="mt-3 text-muted">Loading book details...</p>
+      </div>
+    );
   }
 
-  if(loading) return <>Loading</>;
-  if(!book) return <>Invalid Book</>;
+  if (error || !book) {
+    return (
+      <Alert color="danger" className="text-center">
+        <i className="fas fa-exclamation-triangle mr-2"></i>
+        {error || "Book not found"}
+      </Alert>
+    );
+  }
 
   return (
-    <div className="container m-auto mt-10">
-      <div className="gap-10 rounded border bg-white mx-auto px-4 py-8 flex flex-col md:flex-row">
-        <div className="flex-none w-full md:w-1/3 h-[350px] overflow-hidden">
-          <img
-            src={book.coverImageUrl}
-            alt={book.title}
-            className="w-full h-full object-cover"
-          />
-        </div>
-        <div className="flex-grow ml-0 md:ml-8">
-          <h1 className="text-3xl font-bold mt-4 md:mt-0">{book.title}</h1>
-          <p className="mt-2 text-gray-700">{book.description}</p>
-          <p className="mt-2">
-            <strong>Average Rating:</strong> {book.rateAvg}
-          </p>
-          <p className="mt-2">
-            <strong>Category:</strong> {book.categoryName}
-          </p>
-          <p className="mt-2">
-            <strong>Publisher:</strong> {book.publisherName}
-          </p>
-       <button className="mt-4 bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded" onClick={()=>setAddReview(true)}>
-            Rate This Book
-          </button>
-        </div>
-      </div>
-      {/* {addReview && (
-        <Modal close={() => setAddReview(false)}>
-          <CreateRating close={() => setAddReview(false)}/>
-        </Modal>
+    <div>
+      {/* Book Details Section */}
+      <Card className="mb-4" style={{ borderRadius: '15px', overflow: 'hidden' }}>
+        <CardBody className="p-4">
+          <Row>
+            <Col md={4}>
+              <div 
+                className="book-cover-container"
+                style={{
+                  height: '400px',
+                  borderRadius: '12px',
+                  overflow: 'hidden',
+                  boxShadow: '0 4px 8px rgba(0,0,0,0.1)'
+                }}
+              >
+                <img
+                  src={book.coverImageUrl}
+                  alt={book.title}
+                  className="w-100 h-100"
+                  style={{ objectFit: 'cover' }}
+                />
+              </div>
+            </Col>
+            <Col md={8}>
+              <div className="book-info pl-md-4">
+                <h1 className="display-4 font-weight-bold mb-3">{book.title}</h1>
+                
+                {/* Average Rating */}
+                <div className="mb-3">
+                  <StarRating rating={averageRating} size="1.2rem" />
+                  <span className="ml-2 text-muted">
+                    ({reviews.length} review{reviews.length !== 1 ? 's' : ''})
+                  </span>
+                </div>
+
+                <div className="book-metadata mb-4">
+                  <p className="mb-2">
+                    <i className="fas fa-user mr-2 text-primary"></i>
+                    <strong>Author:</strong> {book.author}
+                  </p>
+                  <p className="mb-2">
+                    <i className="fas fa-tag mr-2 text-primary"></i>
+                    <strong>Category:</strong> {book.categoryName}
+                  </p>
+                  <p className="mb-2">
+                    <i className="fas fa-building mr-2 text-primary"></i>
+                    <strong>Publisher:</strong> {book.publisherName}
+                  </p>
+                  <p className="mb-2">
+                    <i className="fas fa-calendar mr-2 text-primary"></i>
+                    <strong>Publication Year:</strong> {book.publicationYear}
+                  </p>
+                  <p className="mb-2">
+                    <i className="fas fa-calendar mr-2 text-primary"></i>
+                    <strong>Description:</strong> {book.description}
+                  </p>
+                </div>
+
+                {/* Action Buttons */}
+                <div className="d-flex flex-wrap gap-2 mb-3">
+                  {isAuthenticated && (
+                    <>
+                      <Button 
+                        color="primary" 
+                        onClick={() => setShowReviewForm(!showReviewForm)}
+                        style={{ borderRadius: '8px' }}
+                      >
+                        <i className="fas fa-star mr-2"></i>
+                        {showReviewForm ? 'Cancel Review' : 'Write Review'}
+                      </Button>
+                      <WishlistDropdown book={book} />
+                    </>
+                  )}
+                </div>
+
+                {/* Wishlist Indicator */}
+                {isAuthenticated && <BookWishlistIndicator book={book} />}
+              </div>
+            </Col>
+          </Row>
+        </CardBody>
+      </Card>
+
+      {/* Review Form */}
+      {showReviewForm && isAuthenticated && (
+        <Card className="mb-4" style={{ borderRadius: '15px' }}>
+          <CardBody>
+            <ReviewForm 
+              bookId={id}
+              onReviewSubmitted={handleReviewSubmitted}
+              onCancel={() => setShowReviewForm(false)}
+            />
+          </CardBody>
+        </Card>
       )}
-      <Recommandation /> */}
+
+      {/* Reviews Section */}
+      <Card style={{ borderRadius: '15px' }}>
+        <CardBody className="p-4">
+          <ReviewsList 
+            reviews={reviews}
+            loading={ratingsLoading}
+            error={ratingsError}
+          />
+        </CardBody>
+      </Card>
     </div>
   );
 };

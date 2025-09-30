@@ -6,7 +6,6 @@ import NavBar from "./components/NavBar";
 import Footer from "./components/Footer";
 import Home from "./views/Home";
 import Profile from "./views/Profile";
-import ExternalApi from "./views/ExternalApi";
 import { useAuth0, withAuthenticationRequired } from "@auth0/auth0-react";
 import history from "./utils/history";
 
@@ -22,6 +21,9 @@ import AdminLayout from "./views/AdminLayout";
 import AdminDashboard from "./views/AdminDashboard";
 import AdminBooks from "./views/AdminBooks";
 import AdminCategories from "./views/AdminCategories";
+import AdminAuthors from "./views/AdminAuthors";
+import AdminPublishers from "./views/AdminPublishers";
+import AdminEvents from "./views/AdminEvents";
 import ProtectedAdmin from "./components/ProtectedAdmin";
 import MyWishlists from "./views/MyWishlists";
 import WishlistDetails from "./views/WishlistDetails";
@@ -65,6 +67,27 @@ const App = () => {
               </AdminLayout>
             </ProtectedAdmin>
           </Route>
+          <Route path="/admin/authors">
+            <ProtectedAdmin>
+              <AdminLayout>
+                <AdminAuthors />
+              </AdminLayout>
+            </ProtectedAdmin>
+          </Route>
+          <Route path="/admin/publishers">
+            <ProtectedAdmin>
+              <AdminLayout>
+                <AdminPublishers />
+              </AdminLayout>
+            </ProtectedAdmin>
+          </Route>
+          <Route path="/admin/events">
+            <ProtectedAdmin>
+              <AdminLayout>
+                <AdminEvents />
+              </AdminLayout>
+            </ProtectedAdmin>
+          </Route>
           
           {/* Regular Routes - With Container and Footer */}
           <Route path="/" exact>
@@ -94,12 +117,6 @@ const App = () => {
           <Route path="/book/:id">
             <Container className="flex-grow-1 mt-5">
               <BookDetails />
-            </Container>
-            <Footer />
-          </Route>
-          <Route path="/external-api">
-            <Container className="flex-grow-1 mt-5">
-              <ExternalApi />
             </Container>
             <Footer />
           </Route>

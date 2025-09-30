@@ -45,8 +45,14 @@ const NavBar = () => {
     <div className="nav-container">
       <Navbar color="light" light expand="md" container={false}>
         <Container>
-          <h2 className="text-bold mr-10">Better Reads</h2>
-          {/* <NavbarBrand className="logo" /> */}
+          <NavbarBrand tag={RouterNavLink} to="/" className="d-flex align-items-center">
+            <img 
+              src="/logo.png" 
+              alt="Better Reads" 
+              style={{ height: '40px', width: 'auto' }}
+              className="me-2"
+            />
+          </NavbarBrand>
           <NavbarToggler onClick={toggle} />
           <Collapse isOpen={isOpen} navbar>
             <Nav className="mr-auto" navbar>
@@ -77,23 +83,10 @@ const NavBar = () => {
                 <NavItem>
                   <NavLink
                     tag={RouterNavLink}
-                    to="/external-api"
-                    exact
-                    activeClassName="router-link-exact-active"
-                  >
-                    External API
-                  </NavLink>
-                </NavItem>
-              )}
-              {isAuthenticated && (
-                <NavItem>
-                  <NavLink
-                    tag={RouterNavLink}
                     to="/wishlists"
                     exact
                     activeClassName="router-link-exact-active"
                   >
-                    <FontAwesomeIcon icon="heart" className="mr-2" />
                     My Wishlists
                   </NavLink>
                 </NavItem>

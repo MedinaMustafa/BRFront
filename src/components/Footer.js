@@ -3,7 +3,7 @@ import React from "react";
 const Footer = () => (
   <footer className="bg-light p-3 text-center">
     <p>
-      Book ratings and reviews curated with ❤️ by <strong>Medina Mustafa</strong> and <strong>Rron Haxhiu</strong>.
+      Better Reads made with ❤️ by <strong>Medina Mustafa</strong> and <strong>Rron Haxhiu</strong>.
     </p>
     <p>
       Explore, rate, and discover your next favorite book!
