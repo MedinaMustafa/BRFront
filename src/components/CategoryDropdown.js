@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { UncontrolledDropdown, DropdownToggle, DropdownMenu, DropdownItem } from "reactstrap";
+import { UncontrolledDropdown, DropdownToggle, DropdownMenu, DropdownItem, Spinner } from "reactstrap";
 import { useHistory } from "react-router-dom";
 import { categoryService } from "../services";
 
@@ -39,7 +39,7 @@ const CategoryDropdown = () => {
       <DropdownMenu>
         {loading ? (
           <DropdownItem disabled>
-            <i className="fas fa-spinner fa-spin mr-2"></i>
+            <Spinner size="sm" className="mr-2" />
             Loading categories...
           </DropdownItem>
         ) : (

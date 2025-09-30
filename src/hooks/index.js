@@ -4,6 +4,8 @@ export { useApi } from "./useApi";
 export { useDropdownData } from "./useDropdownData";
 export { useCategories } from "./useCategories";
 export { useWishlists } from "./useWishlists";
+export { useRatings } from "./useRatings";
+export { useEvents } from "./useEvents";
 
 // You can add more hooks here as your app grows:
 // export { useAuth } from "./useAuth";

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Container, Row, Col, Button } from "reactstrap";
+import { Container, Row, Col, Button, Spinner } from "reactstrap";
 import { useParams, useHistory } from "react-router-dom";
 import { useWishlists } from "../hooks";
 import { bookService } from "../services";
@@ -73,9 +73,8 @@ const WishlistViewer = () => {
       <div style={{ minHeight: '200px' }}>
         {loading ? (
           <div className="text-center py-4">
-            <div className="spinner-border text-primary" role="status">
-              <span className="sr-only">Loading...</span>
-            </div>
+            <Spinner size="lg" color="primary" className="mb-3" />
+            <p className="text-muted">Loading wishlist...</p>
           </div>
         ) : error ? (
           <p>Error: {error}</p>
@@ -83,9 +82,8 @@ const WishlistViewer = () => {
           <p>Wishlist not found</p>
         ) : booksLoading ? (
           <div className="text-center py-4">
-            <div className="spinner-border text-primary" role="status">
-              <span className="sr-only">Loading books...</span>
-            </div>
+            <Spinner size="lg" color="primary" className="mb-3" />
+            <p className="text-muted">Loading books...</p>
           </div>
         ) : books.length === 0 ? (
           <p>Nothing found!</p>

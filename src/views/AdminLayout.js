@@ -30,6 +30,21 @@ const AdminLayout = ({ children }) => {
       path: "/admin/categories",
       label: "Manage Categories",
       icon: "fas fa-tags"
+    },
+    {
+      path: "/admin/authors",
+      label: "Manage Authors",
+      icon: "fas fa-user-edit"
+    },
+    {
+      path: "/admin/publishers",
+      label: "Manage Publishers",
+      icon: "fas fa-building"
+    },
+    {
+      path: "/admin/events",
+      label: "Manage Events",
+      icon: "fas fa-calendar-alt"
     }
   ];
 

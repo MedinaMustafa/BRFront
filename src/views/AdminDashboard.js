@@ -1,15 +1,93 @@
-import React from "react";
-import { Card, CardBody, CardHeader, CardTitle, Row, Col, Button } from "reactstrap";
+import React, { useState, useEffect } from "react";
+import { Card, CardBody, CardHeader, CardTitle, Row, Col, Button, Spinner } from "reactstrap";
 import { Link } from "react-router-dom";
+import { useAuth0 } from "@auth0/auth0-react";
+import bookService from "../services/bookService";
+import authorService from "../services/authorService";
+import publisherService from "../services/publisherService";
+import eventService from "../services/eventService";
+import { useCategories } from "../hooks";
 
 const AdminDashboard = () => {
+  const { getAccessTokenSilently } = useAuth0();
+  const [stats, setStats] = useState({
+    books: 0,
+    authors: 0,
+    publishers: 0,
+    categories: 0,
+    events: 0
+  });
+  const [loading, setLoading] = useState(true);
+  const { categories } = useCategories();
+
+  useEffect(() => {
+    fetchStats();
+  }, [categories]);
+
+  const fetchStats = async () => {
+    try {
+      setLoading(true);
+      
+      // Get access token for admin requests
+      const token = await getAccessTokenSilently();
+      
+      // Fetch all data in parallel
+      const [booksData, authorsData, publishersData, eventsData] = await Promise.all([
+        bookService.getAllBooks(),
+        authorService.getAllAuthors(),
+        publisherService.getAllPublishers(),
+        eventService.getAllEvents(token).catch(() => []) // Fallback to empty array if events fail
+      ]);
+
+      setStats({
+        books: booksData.length,
+        authors: authorsData.length,
+        publishers: publishersData.length,
+        categories: categories.length,
+        events: eventsData.length
+      });
+    } catch (error) {
+      console.error("Error fetching dashboard stats:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const dashboardStats = [
     {
       title: "Total Books",
-      value: "0",
+      value: loading ? "..." : stats.books.toString(),
       icon: "fas fa-book",
       color: "primary",
       link: "/admin/books"
+    },
+    {
+      title: "Total Authors",
+      value: loading ? "..." : stats.authors.toString(),
+      icon: "fas fa-user-edit",
+      color: "success",
+      link: "/admin/authors"
+    },
+    {
+      title: "Total Publishers",
+      value: loading ? "..." : stats.publishers.toString(),
+      icon: "fas fa-building",
+      color: "info",
+      link: "/admin/publishers"
+    },
+    {
+      title: "Total Categories",
+      value: loading ? "..." : stats.categories.toString(),
+      icon: "fas fa-tags",
+      color: "warning",
+      link: "/admin/categories"
+    },
+    {
+      title: "Total Events",
+      value: loading ? "..." : stats.events.toString(),
+      icon: "fas fa-calendar-alt",
+      color: "secondary",
+      link: "/admin/events"
     }
   ];
 
@@ -18,9 +96,29 @@ const AdminDashboard = () => {
     <div className="admin-dashboard">
       <div className="d-flex justify-content-between align-items-center mb-4">
         <h1 className="h3 mb-0">Admin Dashboard</h1>
-        <div className="text-muted">
-          <i className="fas fa-calendar-alt me-2"></i>
-          {new Date().toLocaleDateString()}
+        <div className="d-flex align-items-center gap-3">
+          <Button 
+            color="outline-primary" 
+            size="sm" 
+            onClick={fetchStats}
+            disabled={loading}
+          >
+            {loading ? (
+              <>
+                <Spinner size="sm" className="me-2" />
+                Refreshing...
+              </>
+            ) : (
+              <>
+                <i className="fas fa-sync-alt me-2"></i>
+                Refresh Stats
+              </>
+            )}
+          </Button>
+          <div className="text-muted">
+            <i className="fas fa-calendar-alt me-2"></i>
+            {new Date().toLocaleDateString()}
+          </div>
         </div>
       </div>
 
@@ -42,6 +140,42 @@ const AdminDashboard = () => {
       </Card>
 
       {/* Statistics Cards */}
+      <Row className="mb-4">
+        {dashboardStats.map((stat, index) => (
+          <Col md={6} lg={3} key={index} className="mb-3">
+            <Card className="h-100 border-0 shadow-sm">
+              <CardBody>
+                <div className="d-flex align-items-center">
+                  <div className="flex-shrink-0">
+                    <div className={`rounded-circle p-3 bg-${stat.color} text-white`}>
+                      <i className={`${stat.icon} fa-lg`}></i>
+                    </div>
+                  </div>
+                  <div className="flex-grow-1 ms-3">
+                    <div className="text-muted small">{stat.title}</div>
+                    <div className="h4 mb-0 font-weight-bold">{stat.value}</div>
+                  </div>
+                </div>
+                <div className="mt-3">
+                  <Button 
+                    tag={Link} 
+                    to={stat.link} 
+                    color={stat.color} 
+                    size="sm" 
+                    outline
+                    className="w-100"
+                  >
+                    <i className="fas fa-arrow-right me-1"></i>
+                    Manage
+                  </Button>
+                </div>
+              </CardBody>
+            </Card>
+          </Col>
+        ))}
+      </Row>
+
+      {/* Quick Actions */}
       <Row className="mb-4">
         <Col md={12}>
           <h5 className="mb-3">System Overview</h5>

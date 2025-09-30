@@ -5,6 +5,7 @@ export { default as authorService } from './authorService';
 export { default as publisherService } from './publisherService';
 export { default as categoryManagementService } from './categoryManagementService';
 export { default as wishlistService } from './wishlistService';
+export { default as ratingService } from './ratingService';
 
 // You can add more services here as your app grows:
 // export { default as userService } from './userService';

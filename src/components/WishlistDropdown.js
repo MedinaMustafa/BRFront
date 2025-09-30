@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Button, Modal, ModalHeader, ModalBody, ModalFooter, Form, FormGroup, Label, Input } from "reactstrap";
+import { Button, Modal, ModalHeader, ModalBody, ModalFooter, Form, FormGroup, Label, Input, Spinner } from "reactstrap";
 import { useWishlists } from "../hooks";
 import { toast } from "react-toastify";
 
@@ -55,7 +55,7 @@ const WishlistDropdown = ({ book, onBookAdded }) => {
   if (loading) {
     return (
       <Button color="primary" disabled>
-        <i className="fas fa-spinner fa-spin mr-2"></i>
+        <Spinner size="sm" className="mr-2" />
         Loading...
       </Button>
     );
@@ -216,7 +216,7 @@ const WishlistDropdown = ({ book, onBookAdded }) => {
                     </small>
                   </div>
                   {isAdding ? (
-                    <i className="fas fa-spinner fa-spin text-primary"></i>
+                    <Spinner size="sm" color="primary" />
                   ) : (
                     <i className="fas fa-chevron-right text-muted"></i>
                   )}

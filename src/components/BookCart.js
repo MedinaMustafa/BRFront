@@ -1,7 +1,7 @@
 import { NavLink } from "react-router-dom";
-// import Stars from "../general/Stars";
 import WishlistDropdown from "./WishlistDropdown";
 import BookWishlistIndicator from "./BookWishlistIndicator";
+import StarRating from "./StarRating";
 
 function BookCart({ book }) {
 
@@ -22,8 +22,10 @@ function BookCart({ book }) {
           <div className="font-bold text-xl">{book.title}</div>
           <p className="text-gray-700 text-base">{book.author}</p>
           <p>{book.publicationYear}</p>
+          <div className="mt-2">
+            <StarRating rating={book.rateAvg || 0} size="0.9rem" />
+          </div>
         </div>
-        {/* {<Stars no={3} />} */}
       </NavLink>
       <div className="d-flex gap-2 mt-2">
         <WishlistDropdown book={book} />
